@@ -27,9 +27,16 @@ class Box extends React.Component {
                 onChoosePhoto={this.handleChoosePhoto} />
         );
 
+
+
+
         this.state = {
             gameScore: 0
         };
+    }
+
+    componentDidMount() {
+        this.setPhotoTopLeftArray();
     }
 
     componentDidUpdate() {
@@ -94,6 +101,7 @@ class Box extends React.Component {
         }
     }
 
+
     // assign unique random numbers from 0 to 11 in the array to rearrange position of photos
     photoSequenceArrayShuffle = () => {
         // console.log("photoSequence");
@@ -102,8 +110,8 @@ class Box extends React.Component {
         // console.log("Box photo sequenceShuffle Array: ", this.photoSequenceArray);
 
         // generate starting photo positions (then reassign top and left based on new sequence)
-        this.setPhotoTopLeftArray();
-        // console.log("this.photoTopLeftArray: ", this.photoTopLeftArray);
+        // this.setPhotoTopLeftArray();
+        console.log("this.photoTopLeftArray: ", this.photoTopLeftArray);
 
         this.composerArray = composers.map(composer =>
             // <Photo key={this.photoSequenceArray[composer.id]} {...composer} onChoosePhoto={this.handleChoosePhoto} />
@@ -145,7 +153,7 @@ class Box extends React.Component {
 
             if (this.props.loggedIn && this.bestGameScore <= this.props.score) {   // if this best < Mongo best
                 this.bestGameScore = this.props.score;                             //   then use Mongo best score
-                // console.log("just set this.best.gameScore = this.props.score", this.props.score);
+                console.log("just set this.best.gameScore = this.props.score", this.props.score);
             }
 
             if (this.lastGameScore >= this.bestGameScore) {
