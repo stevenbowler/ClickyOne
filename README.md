@@ -14,7 +14,7 @@ This project has afforded this programmer the opportunity to gain experience in 
 
 First, watch the video tutorial by clicking [this link](https://drive.google.com/file/d/1JP_OVqQBgVvdr6Cqqd9xBg2_fPOLpMeB/view).
 
-Then play Clicky Game by [clicking here](https://secure-citadel-76923.herokuapp.com/).
+Then play Clicky Game by [clicking here](https://clickyone.herokuapp.com/).
 
 The game starts by clicking one of the photos, and then successively clicking different photos.  Game ends and final score is calculated when any photo is clicked a second time.
 
