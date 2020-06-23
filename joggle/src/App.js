@@ -40,10 +40,7 @@ class App extends React.Component {
     this.fuelThiefTransition = originalFuelThiefTransition;
     this.levelTransitionFactor = (parseS(this.fuelThiefTransition) - 3) / maxLevel;
     this.loggedIn = false;
-    this.token = "";
     this.name = "";
-    this.email = "";
-    this.password = "";
     this.timerOn = false;
     this.gamesData = {
       userBestScore: 0,
@@ -63,6 +60,8 @@ class App extends React.Component {
       isOpenRegisterModal: false,
       isOpenLeaderBoardModal: false,
       name: "Guest...Log In",
+      token: "",
+      email: "",
       gameOn: false,
       loggedIn: false,
       finalScore: 0,
@@ -128,10 +127,7 @@ class App extends React.Component {
 
   // called from LoginRegisterModals component to handle registration request attribute changes
   handleRegister = (data) => {
-    // console.log("App.js handleRegister input name: " + data.name + "email: " + data.email + "password: " + data.password);
-    var finishRegister = () => {
-      this.handleToggleLoginRegisterModal();
-    }
+
     axios
       .post(
         '/api/users/register',
@@ -140,42 +136,40 @@ class App extends React.Component {
           email: data.email,
           password: data.password
         })
-      .then(function (response) {
+      .then(response => {
         console.log(`register user: ${response.data.name} ${response.data.date}`);
-        //this.handleLogin(loginData);    // TODO should be able to log automatically in once registered OK
+
+        axios
+          .post(
+            '/api/users/login',
+            {
+              email: data.email,
+              password: data.password
+            })
+          .then(res => {
+            console.log(`login user: ${res.data.user.name}`);
+            this.setState({ name: res.data.user.name }); // will display name on Navbar
+            this.setState({ token: res.data.token }); // will display name on Navbar
+            this.setState({ email: data.email }); // will display name on Navbar
+            this.setState({ loggedIn: true });
+            this.handleToggleLoginModal();
+          })
+          .catch(error => {
+            console.log("handleLogin catch errorResponse :" + error);
+            this.setState({ name: "wrong email or pswd" }); // will display error message on Navbar
+            this.handleToggleLoginModal();
+          });
+
+
       })
       .catch(function (error) {
         console.log(" Could not register from App.js: " + error.message);
-      })
-      .finally(function () {
-        finishRegister();
-      })
-      ;
+      });
   }
 
 
   handleLogin = (data) => {
-    var tokenHandleLogin = "";
-    var nameHandleLogin = "";
-    var loginError = "";
-    var errorResponse = "";
-    const finishLogin = () => {
-      if (loginError) {
-        this.setState({ name: "wrong email or pswd" }); // will display error message on Navbar
-        // console.log(this.name);
-        this.handleToggleLoginModal();
-        return;
-      }
-      this.token = tokenHandleLogin;
-      // console.log("handleLogin this.token = tokenHandleLogin" + this.token);
-      this.email = data.email;
-      this.password = data.password;
-      this.setState({ name: nameHandleLogin }); // will display name on Navbar
-      this.handleToggleLoginModal();
-      this.setState({ loggedIn: true });
-      //console.log(" token .finally outside of Axios: " + tokenHandleLogin + " this.token: " + this.token);
-    }
-    // const loginObject = // removed due to wasn't used (yet)
+
     axios
       .post(
         '/api/users/login',
@@ -183,30 +177,24 @@ class App extends React.Component {
           email: data.email,
           password: data.password
         })
-      .then(function (response) {
+      .then(response => {
         console.log(`login user: ${response.data.user.name}`);
-        tokenHandleLogin = response.data.token;
-        nameHandleLogin = response.data.user.name;
-        // console.log("app.js handleLogin tokenHandleLogin: " + tokenHandleLogin);
+        this.setState({ name: response.data.user.name }); // will display name on Navbar
+        this.setState({ token: response.data.token }); // will display name on Navbar
+        this.setState({ email: data.email }); // will display name on Navbar
+        this.setState({ loggedIn: true });
+        this.handleToggleLoginModal();
       })
-      .catch(function (error) {
-        //console.log("Steve Output, could not login from App.js: " + error);
-        loginError = error;
-        errorResponse = error.response;
-        console.log("Steve Output, could not login from App.js: " + loginError);
-        console.log("handleLogin catch errorResponse :" + errorResponse);
-      })
-      .finally(function () {
-        finishLogin();
+      .catch(error => {
+        console.log("handleLogin catch errorResponse :" + error);
+        this.setState({ name: "wrong email or pswd" }); // will display error message on Navbar
+        this.handleToggleLoginModal();
       });
   }
 
 
   handleLogout = () => {
     console.log(`logout: ${this.state.name}`);
-    this.token = "";
-    this.email = "";
-    this.password = "";
     this.setState({ name: "Logged out" });
     this.setState({ loggedIn: false });
     this.setState({ finalScore: 0 });
@@ -272,17 +260,16 @@ class App extends React.Component {
           onCancel={this.handleToggleLoginRegisterModal}
           onRegister={this.handleRegister}
           onLogin={this.handleLogin}
-          name={this.name}
-          email={this.email}
-          password={this.password}
+          name={this.state.name}
+          email={this.state.email}
         />
         <LeaderBoardModal
           loggedIn={this.state.loggedIn}
           onLogout={this.handleLogout}
           isOpenLeaderBoardModal={this.state.isOpenLeaderBoardModal}
           onCancel={this.handleToggleLeaderBoardModal}
-          token={this.token}
-          email={this.email}
+          token={this.state.token}
+          email={this.state.email}
           userName={this.state.name}
           score={this.state.finalScore}
           level={this.state.finalLevel}

@@ -82,10 +82,6 @@ class Box extends React.Component {
     }
 
 
-
-    // window.scrollY + document.querySelector('#elementId').getBoundingClientRect().top // Y
-    // window.scrollX + document.querySelector('#elementId').getBoundingClientRect().left // X
-    // testing for transitionDuration to slide photos, need to grab top and left positions
     setPhotoTopLeftArray = () => {
         // generate starting photo positions (then reassign top and left based on new sequence)
         this.photoTopLeftArray = [];
